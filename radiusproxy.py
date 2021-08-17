@@ -3,6 +3,8 @@ from __future__ import print_function
 from pyrad import dictionary, packet, server
 from pyrad.client import Client
 import logging
+import os 
+import sys
 
 logging.basicConfig( level="DEBUG",
                     format="%(asctime)s [%(levelname)-8s] %(message)s")
@@ -80,6 +82,9 @@ class FakeServer(server.Server):
         self.SendReplyPacket(pkt.fd, reply)
 
 if __name__ == '__main__':
+    if not all(v in os.environ for v in ["OKTA_RADIUS_AGENT_HOST", "OKTA_RADIUS_AGENT_SECRET", "OKTA_RADIUS_AUTH_PORT"]):
+        logging.error("Missing environment variables!")
+        sys.exit("Missing environment variables!")
     # create server and read dictionary
     srv = FakeServer(dict=dictionary.Dictionary("dictionary"), coa_enabled=False)
     # add clients (address, secret, name)
